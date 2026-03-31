@@ -68,9 +68,6 @@ namespace CaloriesTracker.Services
 
             var jsonString = await response.Content.ReadAsStringAsync();
 
-            Console.WriteLine("=== ВІДПОВІДЬ ВІД FATSECRET ===");
-            Console.WriteLine(jsonString);
-
             var resultList = new List<ExternalFoodDto>();
 
             using JsonDocument doc = JsonDocument.Parse(jsonString);

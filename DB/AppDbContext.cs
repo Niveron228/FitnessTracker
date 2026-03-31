@@ -3,12 +3,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CaloriesTracker.DB
 {
-    public class FoodsDbContext : DbContext
+    public class AppDbContext : DbContext
     {
-        public FoodsDbContext(DbContextOptions<FoodsDbContext> options) : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
 
         public DbSet<Foods> Foods { get; set; }
+
+        public DbSet<Users> Users { get; set; }
+
+
     }
 }

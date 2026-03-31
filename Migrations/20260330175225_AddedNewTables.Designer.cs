@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CaloriesTracker.Migrations
 {
-    [DbContext(typeof(FoodsDbContext))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20260330175225_AddedNewTables")]
     partial class AddedNewTables
     {

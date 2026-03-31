@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.JsonPatch;
 using CaloriesTracker.Services;
+using System.Text.RegularExpressions;
+using System.Globalization;
+using CaloriesTracker.DTOs;
 
 namespace CaloriesTracker.Controllers
 {
@@ -11,10 +14,10 @@ namespace CaloriesTracker.Controllers
     [ApiController]
     public class FoodsController : ControllerBase
     {
-        private readonly FoodsDbContext _context;
+        private readonly AppDbContext _context;
         private readonly IFoodApiService _foodApiService;
 
-        public FoodsController(FoodsDbContext context, IFoodApiService foodApiService)
+        public FoodsController(AppDbContext context, IFoodApiService foodApiService)
         {
             _context = context;
             _foodApiService = foodApiService;
@@ -66,6 +69,47 @@ namespace CaloriesTracker.Controllers
             await _context.Foods.AddAsync(newItem);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetItemById), new { id = newItem.Id }, newItem);
+        }
+        private double ParseNutritionValue(string description,string key)
+        {
+            var match = Regex.Match(description, $@"{key}:\s*([\d\.]+)", RegexOptions.IgnoreCase);
+
+            if (match.Success && double.TryParse(match.Groups[1].Value, NumberStyles.Any, CultureInfo.InvariantCulture, out double value))
+            {
+                return value;
+            }
+            return 0;
+        }
+
+        [HttpPost("import")]
+        public async Task<IActionResult> ImportExternalFood([FromBody] ExternalFoodDto dto)
+        {
+            var existingFood = await _context.Foods.FirstOrDefaultAsync(f => f.name.ToLower() == dto.Name.ToLower());
+
+            if (existingFood != null)
+            {
+                return Conflict(new { message = "This product is already exist in out database" });
+            }
+
+            double cal = ParseNutritionValue(dto.Description, "Calories");
+            double p = ParseNutritionValue(dto.Description, "Protein");
+            double f = ParseNutritionValue(dto.Description, "Fat");
+            double c = ParseNutritionValue(dto.Description, "Carbs");
+
+            var newLocalFood = new Foods
+            {
+                name = dto.Name,
+                calories = Convert.ToInt32(cal),
+                protein = Convert.ToInt32(p),
+                fats = Convert.ToInt32(f),
+                carbs = Convert.ToInt32(c)
+
+            };
+
+            await _context.Foods.AddAsync(newLocalFood);
+            await _context.SaveChangesAsync();
+
+            return Ok(newLocalFood);
         }
 
         [HttpPut("{id}")]
