@@ -7,9 +7,11 @@ using CaloriesTracker.Services;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using CaloriesTracker.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CaloriesTracker.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class FoodsController : ControllerBase

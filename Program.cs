@@ -23,7 +23,7 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "Введіть 'Bearer ' [пробіл] і потім ваш токен.",
+        Description = "Enter your token",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.Http, 

@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace CaloriesTracker.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -65,14 +64,14 @@ namespace CaloriesTracker.Controllers
 
             string token = CreateToken(user);
 
-            return Ok(new { message = $"Welcome back {user.email}!" });
+            return Ok(new { message = $"Welcome back {user.email}!, your token: {token}" });
         }
 
         private string CreateToken(Users user)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Token"]));
 
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
 
             var claims = new[]
             {
