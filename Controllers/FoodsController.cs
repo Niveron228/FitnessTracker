@@ -47,28 +47,73 @@ namespace CaloriesTracker.Controllers
         public async Task<IActionResult> GetItemByName(string name)
         {
             var searchTerm = name.ToLower();
-            var food = await _context.Foods.AsNoTracking().Where(i => i.name.ToLower().Contains(searchTerm)).ToListAsync();
-            if (food.Any())
+
+            var exactMatch = await _context.Foods.AsNoTracking().FirstOrDefaultAsync(f => f.name.ToLower() == searchTerm);
+
+            if(exactMatch == null)
             {
-                return Ok(food);
+                var externalList = await _foodApiService.SearchFoodAsync(name);
+
+                if (externalList != null && externalList.Any())
+                {
+                    await SaveExternalListToDb(externalList);
+                }
             }
 
-            var externalList = await _foodApiService.SearchFoodAsync(name);
-
-            if (externalList == null || externalList.Count == 0)
-            {
-                return NotFound($"{name} not found in local and external databases.");
-            }
-
-            await SaveExternalListToDb(externalList);
-
-            var newlySavedFood = await _context.Foods
+            var allMatches = await _context.Foods
                 .AsNoTracking()
                 .Where(i => i.name.ToLower()
                 .Contains(searchTerm))
                 .ToListAsync();
 
-            return Ok(newlySavedFood);
+            return allMatches.Any() ? Ok(allMatches) : NotFound("Not found in local and external databases");
+        }
+
+        [HttpGet("daily-stats/{date}")]
+        public async Task<IActionResult> GetDailyStats(DateTime date)
+        {
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int currentUserId = int.Parse(userIdClaim.Value);
+
+            var logs = await _context.mealLogs
+                .Include(m => m.Food)
+                .Where(m => m.UserId == currentUserId
+                && m.LogDate >= date.Date
+                && m.LogDate < date.Date.AddDays(1))
+                .ToListAsync();
+
+            var report = Enum.GetValues(typeof(MealLog.MealType))
+                .Cast<MealLog.MealType>()
+                .Select(type =>
+                {
+                    var mealItems = logs.Where(l => l.Type == type).ToList();
+
+                    return new
+                    {
+                        MealName = type.ToString(),
+                        TotalCalories = Math.Round(mealItems.Sum(i => (i.Food.calories * i.Grams) / 100), 1),
+                        TotalProtein = Math.Round(mealItems.Sum(i => (i.Food.protein * i.Grams) / 100), 1),
+                        TotalFat = Math.Round(mealItems.Sum(i => (i.Food.fats * i.Grams) / 100), 1),
+                        TotalCarbs = Math.Round(mealItems.Sum(i => (i.Food.carbs * i.Grams) / 100), 1),
+                        ItemsCount = mealItems.Count
+                    };
+                });
+
+            var dailySummary = new
+            {
+                Date = date.ToString("yyyy-MM-dd"),
+                Meals = report,
+                DayTotal = new
+                {
+                    Calories = Math.Round(logs.Sum(i => (i.Food.calories * i.Grams) / 100), 1),
+                    Protein = Math.Round(logs.Sum(i => (i.Food.protein * i.Grams) / 100), 1),
+                    Fat = Math.Round(logs.Sum(i => (i.Food.fats * i.Grams) / 100), 1),
+                    Carbs = Math.Round(logs.Sum(i => (i.Food.carbs * i.Grams) / 100), 1)
+                }
+            };
+
+                return Ok(dailySummary);
         }
 
         [Authorize(Roles = "Admin")]
@@ -133,6 +178,72 @@ namespace CaloriesTracker.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(newLocalFood);
+        }
+
+        [HttpPost("add-meal")]
+        public async Task<IActionResult> AddMealToLog([FromBody] AddMealDto request)
+        {
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if(userIdClaim == null)
+            {
+                return Unauthorized("Unauthorized!");
+            }
+            int currentUserId = int.Parse(userIdClaim.Value);
+
+            var searchTerm = request.FoodName.ToLower();
+
+            var food = await _context.Foods.FirstOrDefaultAsync(f => f.name.ToLower() == searchTerm);
+
+            if (food == null)
+            {
+                var externalList = await _foodApiService.SearchFoodAsync(request.FoodName);
+                if (externalList == null || externalList.Count == 0)
+                {
+                    return NotFound();
+                }
+
+                await SaveExternalListToDb(externalList);
+
+                food = await _context.Foods.FirstOrDefaultAsync(f => f.name.ToLower() == searchTerm);
+
+                if (food == null)
+                {
+                    food = await _context.Foods.FirstOrDefaultAsync(f => f.name.ToLower().Contains(searchTerm));
+                }
+            }
+
+            var newMealLog = new MealLog
+            {
+                UserId = currentUserId,
+                FoodId = food.Id,
+                Grams = request.Grams,
+                Type = request.MealType,
+                LogDate = request.LogDate
+            };
+
+            _context.mealLogs.Add(newMealLog);
+            await _context.SaveChangesAsync();
+
+            double actualCalories = (food.calories * request.Grams) / 100;
+            double actualProtein = (food.protein * request.Grams) / 100;
+            double actualFat = (food.fats * request.Grams) / 100;
+            double actualCarbs = (food.carbs * request.Grams) / 100;
+
+            return Ok(new
+            {
+                Message = "Meal added!",
+                Date = request.LogDate.ToString("yyyy-MM-dd"),
+                Meal = request.MealType.ToString(),
+                FoodLogged = food.name,
+                Amount = $"{request.Grams}g",
+                CalculatedMacros = new
+                {
+                    Calories = Math.Round(actualCalories, 1),
+                    Protein = Math.Round(actualProtein, 1),
+                    Fat = Math.Round(actualFat, 1),
+                    Carbs = Math.Round(actualCarbs, 1)
+                }
+            });
         }
 
         [Authorize(Roles = "Admin")]

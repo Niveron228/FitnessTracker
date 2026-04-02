@@ -94,6 +94,8 @@ namespace CaloriesTracker.Controllers
             var cookieOption = new CookieOptions
             {
                 HttpOnly = true,
+                Secure = false,
+                SameSite = SameSiteMode.Lax,
                 Expires = DateTime.Now.AddDays(1)
             };
 

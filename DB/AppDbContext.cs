@@ -13,6 +13,8 @@ namespace CaloriesTracker.DB
 
         public DbSet<Users> Users { get; set; }
 
+        public DbSet<MealLog> mealLogs { get; set; }
+
 
     }
 }
