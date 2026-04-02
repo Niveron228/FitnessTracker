@@ -36,6 +36,7 @@ This project demonstrates the use of relational databases, integration with thir
    git clone [https://github.com/your-username/CaloriesTracker.git](https://github.com/your-username/CaloriesTracker.git)
 
 2. **Configure "appsettings.json":**
+   ``
    {
   "Jwt": {
     "Key": "your_super_secret_and_long_key_here",
@@ -47,12 +48,13 @@ This project demonstrates the use of relational databases, integration with thir
     "ClientSecret": "your_fatsecret_client_secret"
   }
 }
+``
 4. **Apply Migrations (Create Database)**
-   dotnet ef database update
+     `` dotnet ef database update``
 5. **Run the project:**
-   dotnet run
+   ``dotnet run``
 
-   Once running, the Swagger UI will be available at http://localhost:5230/swagger.
+   * Once running, the Swagger UI will be available at http://localhost:5230/swagger.
 
 ## 🗺️ Roadmap
 
