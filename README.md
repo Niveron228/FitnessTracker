@@ -1,6 +1,6 @@
 # 🍏 CaloriesTracker API
 
-A comprehensive backend for a fitness application designed to track daily food intake, automatically calculate macronutrients (macros), and maintain a detailed meal diary. 
+A backend for a fitness application designed to track daily food intake, automatically calculate macronutrients (macros), and maintain a detailed meal diary. 
 
 This project demonstrates the use of relational databases, integration with third-party APIs (FatSecret), and secure authentication using JWTs via HTTP-only Cookies.
 
@@ -10,7 +10,6 @@ This project demonstrates the use of relational databases, integration with thir
 * **ORM:** Entity Framework Core
 * **Authentication:** JWT (JSON Web Tokens) + HTTP-only Cookies
 * **External Integrations:** [FatSecret API](https://platform.fatsecret.com/api/)
-* **Frontend (Optional):** Vanilla JS + HTML/CSS
 
 ## ✨ Key Features
 1. **🔐 Security & Authentication:**
@@ -37,15 +36,15 @@ This project demonstrates the use of relational databases, integration with thir
 
 2. **Configure "appsettings.json":**
    ``
-   {
-  "Jwt": {
-    "Key": "your_super_secret_and_long_key_here",
-    "Issuer": "CaloriesTrackerServer",
-    "Audience": "CaloriesTrackerUsers"
+{
+  &quot;Jwt&quot;: {
+    &quot;Key&quot;: &quot;your_super_secret_and_long_key_here&quot;,
+    &quot;Issuer&quot;: &quot;CaloriesTrackerServer&quot;,
+    &quot;Audience&quot;: &quot;CaloriesTrackerUsers&quot;
   },
-  "FatSecret": {
-    "ClientId": "your_fatsecret_client_id",
-    "ClientSecret": "your_fatsecret_client_secret"
+  &quot;FatSecret&quot;: {
+    &quot;ClientId&quot;: &quot;your_fatsecret_client_id&quot;,
+    &quot;ClientSecret&quot;: &quot;your_fatsecret_client_secret&quot;
   }
 }
 ``
