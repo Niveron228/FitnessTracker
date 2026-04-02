@@ -45,13 +45,31 @@ namespace CaloriesTracker.Controllers
         [HttpGet("search/{name}")]
         public async Task<IActionResult> GetItemByName(string name)
         {
-            var food = await _context.Foods.AsNoTracking().FirstOrDefaultAsync(i => i.name == name);
-            if (food == null)
+            var searchTerm = name.ToLower();
+            var food = await _context.Foods.AsNoTracking().Where(i => i.name.ToLower().Contains(searchTerm)).ToListAsync();
+            if (food.Any())
             {
-                return NotFound();
+                return Ok(food);
             }
-            return Ok(food);
+
+            var externalList = await _foodApiService.SearchFoodAsync(name);
+
+            if (externalList == null || externalList.Count == 0)
+            {
+                return NotFound($"{name} not found in local and external databases.");
+            }
+
+            await SaveExternalListToDb(externalList);
+
+            var newlySavedFood = await _context.Foods
+                .AsNoTracking()
+                .Where(i => i.name.ToLower()
+                .Contains(searchTerm))
+                .ToListAsync();
+
+            return Ok(newlySavedFood);
         }
+        
 
         [HttpGet("external/search/{name}")]
         public async Task<IActionResult> SearchExternalFood(string name)
@@ -162,6 +180,15 @@ namespace CaloriesTracker.Controllers
             _context.Foods.Remove(food);
             await _context.SaveChangesAsync();
             return NoContent();
+        }
+
+
+        private async Task SaveExternalListToDb(List<ExternalFoodDto> externalList)
+        {
+            foreach (var externalItem in externalList)
+            {
+                await ImportExternalFood(externalItem);
+            }
         }
 
     }
