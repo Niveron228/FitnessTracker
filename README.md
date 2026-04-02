@@ -35,7 +35,7 @@ This project demonstrates the use of relational databases, integration with thir
    git clone [https://github.com/your-username/CaloriesTracker.git](https://github.com/your-username/CaloriesTracker.git)
 
 2. **Configure "appsettings.json":**
-   ``
+```json
 {
   &quot;Jwt&quot;: {
     &quot;Key&quot;: &quot;your_super_secret_and_long_key_here&quot;,
@@ -47,7 +47,7 @@ This project demonstrates the use of relational databases, integration with thir
     &quot;ClientSecret&quot;: &quot;your_fatsecret_client_secret&quot;
   }
 }
-``
+```
 4. **Apply Migrations (Create Database)**
      `` dotnet ef database update``
 5. **Run the project:**
