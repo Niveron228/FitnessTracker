@@ -85,7 +85,7 @@ namespace CaloriesTracker.Controllers
 
             Response.Cookies.Append("jwt", token, cookieOption);
 
-            return Ok(new { message = $"Welcome back {user.email}!, your token saved automatically in cookies!" });
+            return Ok(new { message = $"Welcome back {user.email}!, your token saved automatically in cookies!"});
         }
 
         private string CreateToken(Users user)

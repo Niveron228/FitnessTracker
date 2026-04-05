@@ -96,7 +96,18 @@ namespace CaloriesTracker.Controllers
                         TotalProtein = Math.Round(mealItems.Sum(i => (i.Food.protein * i.Grams) / 100), 1),
                         TotalFat = Math.Round(mealItems.Sum(i => (i.Food.fats * i.Grams) / 100), 1),
                         TotalCarbs = Math.Round(mealItems.Sum(i => (i.Food.carbs * i.Grams) / 100), 1),
-                        ItemsCount = mealItems.Count
+                        ItemsCount = mealItems.Count,
+
+                        Items = mealItems.Select(item => new
+                        {
+                            Id = item.Id,
+                            Name = item.Food.name,
+                            Grams = item.Grams,
+                            Calories = Math.Round((item.Food.calories * item.Grams) / 100, 1),
+                            Protein = Math.Round((item.Food.protein * item.Grams) / 100, 1),
+                            Fat = Math.Round((item.Food.fats * item.Grams) / 100, 1),
+                            Carbs = Math.Round((item.Food.carbs * item.Grams) / 100, 1)
+                        }).ToList()
                     };
                 });
 
@@ -297,6 +308,27 @@ namespace CaloriesTracker.Controllers
             _context.Foods.Remove(food);
             await _context.SaveChangesAsync();
             return NoContent();
+        }
+
+        [HttpDelete("delete-meal/{logId}")]
+        public async Task<IActionResult> DeleteMealLog(int logId)
+        {
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+            int currentUserId = int.Parse(userIdClaim.Value);
+
+            var mealLog = await _context.mealLogs
+                .FirstOrDefaultAsync(m => m.Id == logId && m.UserId == currentUserId);
+
+            if (mealLog == null)
+            {
+                return NotFound(new { Message = "Not found!" });
+            }
+
+            _context.mealLogs.Remove(mealLog);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "Product removed!" });
         }
 
         // custom method to get and save list of objects from external api 
