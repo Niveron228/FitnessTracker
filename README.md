@@ -1,8 +1,15 @@
-# 🍏 CaloriesTracker API
+# ⚡ Calories & Workout Tracker 🍎🏋️‍♂️
 
-A backend for a fitness application designed to track daily food intake, automatically calculate macronutrients (macros), and maintain a detailed meal diary. 
+A modern Fullstack application for tracking nutrition and workouts. Built with **.NET 8** and **React**, featuring a sleek **Glassmorphism** design and smooth animations.
 
 This project demonstrates the use of relational databases, integration with third-party APIs (FatSecret), and secure authentication using JWTs via HTTP-only Cookies.
+
+## ✨ Features
+* **🔐 Full Authentication:** Secure Registration and Login with password hashing (BCrypt).
+* **🍎 Calorie Tracker:** Search products, add meals, and automatic Macro (P/F/C) calculation.
+* **💪 Workout Module:** Add exercises, sets, and weights with date-based history.
+* **🎨 Modern UI:** Animated backgrounds, Glassmorphism effects, and custom Toast notifications.
+* **🐳 Dockerized:** Entire stack (Frontend + Backend + DB) runs with a single command.
 
 ## 🚀 Tech Stack
 * **Backend:** C#, ASP.NET Core (Web API)
@@ -11,22 +18,23 @@ This project demonstrates the use of relational databases, integration with thir
 * **Authentication:** JWT (JSON Web Tokens) + HTTP-only Cookies
 * **External Integrations:** [FatSecret API](https://platform.fatsecret.com/api/)
 
-## ✨ Key Features
-1. **🔐 Security & Authentication:**
-   * User registration and login.
-   * Storing tokens safely in `HttpOnly` Cookies (protecting against XSS).
-   * Role-Based Access Control (RBAC): separation of regular users and administrators.
+## 📸 Screenshots
 
-2. **🍎 Smart Food Database (API Caching):**
-   * Search for foods by name.
-   * If a product is not found in the local database, the backend automatically fetches it from the FatSecret API, caches it in the local SQLite database, and returns the result to the user.
+### 🔐 Login & Registration
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/357cf0a5-e296-4c76-8d12-b9d09a6bff23" width="450" alt="Login Screen" />
+  <img src="https://github.com/user-attachments/assets/e27127a5-5b99-409a-8332-caaabefddc0e" width="415" alt="Registration Screen" />
+</div>
 
-3. **📊 Meal Log (Diary):**
-   * Add food items to the diary categorized by: `Breakfast`, `Lunch`, `Dinner`, `Snack`.
-   * **Dynamic Macro Calculation:** the user inputs the weight in grams, and the server automatically recalculates calories, protein, fat, and carbs based on the base (100g) nutritional value.
-
-4. **📈 Daily Statistics:**
-   * Generate a detailed daily report: total macronutrient intake broken down by each meal, along with a total daily summary.
+### 🍎 Dashboard & Tracking
+<div align="center">
+  <p><b>Main Dashboard View</b></p>
+  <img src="https://github.com/user-attachments/assets/6d7a4a1e-6b3f-4c13-8531-3360063ad1e1" width="900" alt="Dashboard Main" />
+  
+  <p><b>Workout Tracking & History</b></p>
+  <img src="https://github.com/user-attachments/assets/67d89653-a155-4268-9f3d-921ec5b853f5" width="400" alt="Workout Mobile View" />
+  <img src="https://github.com/user-attachments/assets/330a9ab8-b68d-49c8-bcca-c2b120475dc1" width="900" alt="Dashboard Statistics" />
+</div>
 
 ## 🛠️ How to Run Locally
 
