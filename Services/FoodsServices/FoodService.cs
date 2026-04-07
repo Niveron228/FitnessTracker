@@ -61,7 +61,6 @@ namespace CaloriesTracker.Services.FoodsServices
             var existingFood = await _context.Foods.FirstOrDefaultAsync(i => i.Id == id);
             if (existingFood == null) return null;
 
-            // Застосовуємо часткові зміни
             patchDoc.ApplyTo(existingFood);
             await _context.SaveChangesAsync();
 
@@ -75,7 +74,7 @@ namespace CaloriesTracker.Services.FoodsServices
 
             _context.Foods.Remove(food);
             await _context.SaveChangesAsync();
-            return true; // Успішно видалено
+            return true;
         }
     }
 }

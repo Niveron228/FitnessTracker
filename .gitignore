@@ -485,6 +485,10 @@ $RECYCLE.BIN/
 appsettings.json
 appsettings.Development.json
 
+data/
+*.db
+*.sqlite
+
 
 node_modules/
 dist/
@@ -493,5 +497,6 @@ build/
 .DS_Storef o o d s . d b 
  
  f o o d s . d b 
+
  
  
