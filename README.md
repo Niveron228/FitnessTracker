@@ -26,6 +26,11 @@ This project demonstrates the use of relational databases, integration with thir
   <img src="https://github.com/user-attachments/assets/e27127a5-5b99-409a-8332-caaabefddc0e" width="415" alt="Registration Screen" />
 </div>
 
+### 🏠 Home Page
+<div align="center">
+  <img width="1848" height="915" alt="image" src="https://github.com/user-attachments/assets/7674c399-5dad-4ade-85df-b5db3b76d9ac" />
+</div>
+
 ### 🍎 Dashboard & Tracking
 <div align="center">
   <p><b>Main Dashboard View</b></p>
